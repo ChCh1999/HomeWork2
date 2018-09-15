@@ -22,6 +22,7 @@ namespace Program2
             Console.WriteLine("输入"+nCount+"个整数:");
             for (int i = 0; i < nCount; i++)
             {
+                Console.Write("第" + (i+1) + "个:");
                 NumArray[i] = int.Parse(Console.ReadLine());
             }
 
