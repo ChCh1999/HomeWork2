@@ -19,7 +19,7 @@ namespace Program2
             NumArray = new int[nCount];
 
             //输入数组
-            Console.WriteLine("输入一串整数:");
+            Console.WriteLine("输入"+nCount+"个整数:");
             for (int i = 0; i < nCount; i++)
             {
                 NumArray[i] = int.Parse(Console.ReadLine());
