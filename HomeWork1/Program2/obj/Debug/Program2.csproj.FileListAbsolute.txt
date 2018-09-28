@@ -1,0 +1,10 @@
+E:\workspace\CSharp\ConsoleApp1\Program2\bin\Debug\Program2.exe.config
+E:\workspace\CSharp\ConsoleApp1\Program2\bin\Debug\Program2.exe
+E:\workspace\CSharp\ConsoleApp1\Program2\bin\Debug\Program2.pdb
+E:\workspace\CSharp\ConsoleApp1\Program2\obj\Debug\Program2.csprojResolveAssemblyReference.cache
+E:\workspace\CSharp\ConsoleApp1\Program2\obj\Debug\Program2.Form1.resources
+E:\workspace\CSharp\ConsoleApp1\Program2\obj\Debug\Program2.Properties.Resources.resources
+E:\workspace\CSharp\ConsoleApp1\Program2\obj\Debug\Program2.csproj.GenerateResource.Cache
+E:\workspace\CSharp\ConsoleApp1\Program2\obj\Debug\Program2.csproj.CoreCompileInputs.cache
+E:\workspace\CSharp\ConsoleApp1\Program2\obj\Debug\Program2.exe
+E:\workspace\CSharp\ConsoleApp1\Program2\obj\Debug\Program2.pdb
