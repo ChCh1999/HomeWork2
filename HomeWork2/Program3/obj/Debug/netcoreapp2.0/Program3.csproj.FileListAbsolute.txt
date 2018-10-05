@@ -1,0 +1,11 @@
+E:\workspace\CSharp\HomeWork2\Program3\bin\Debug\netcoreapp2.0\Program3.deps.json
+E:\workspace\CSharp\HomeWork2\Program3\bin\Debug\netcoreapp2.0\Program3.runtimeconfig.json
+E:\workspace\CSharp\HomeWork2\Program3\bin\Debug\netcoreapp2.0\Program3.runtimeconfig.dev.json
+E:\workspace\CSharp\HomeWork2\Program3\bin\Debug\netcoreapp2.0\Program3.dll
+E:\workspace\CSharp\HomeWork2\Program3\bin\Debug\netcoreapp2.0\Program3.pdb
+E:\workspace\CSharp\HomeWork2\Program3\obj\Debug\netcoreapp2.0\Program3.csprojResolveAssemblyReference.cache
+E:\workspace\CSharp\HomeWork2\Program3\obj\Debug\netcoreapp2.0\Program3.csproj.CoreCompileInputs.cache
+E:\workspace\CSharp\HomeWork2\Program3\obj\Debug\netcoreapp2.0\Program3.AssemblyInfoInputs.cache
+E:\workspace\CSharp\HomeWork2\Program3\obj\Debug\netcoreapp2.0\Program3.AssemblyInfo.cs
+E:\workspace\CSharp\HomeWork2\Program3\obj\Debug\netcoreapp2.0\Program3.dll
+E:\workspace\CSharp\HomeWork2\Program3\obj\Debug\netcoreapp2.0\Program3.pdb
