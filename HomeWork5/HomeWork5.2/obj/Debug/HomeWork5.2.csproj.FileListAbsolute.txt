@@ -1,0 +1,10 @@
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.2\bin\Debug\HomeWork5.2.exe.config
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.2\bin\Debug\HomeWork5.2.exe
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.2\bin\Debug\HomeWork5.2.pdb
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.2\obj\Debug\HomeWork5.2.csprojResolveAssemblyReference.cache
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.2\obj\Debug\HomeWork5._2.Form1.resources
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.2\obj\Debug\HomeWork5._2.Properties.Resources.resources
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.2\obj\Debug\HomeWork5.2.csproj.GenerateResource.Cache
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.2\obj\Debug\HomeWork5.2.csproj.CoreCompileInputs.cache
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.2\obj\Debug\HomeWork5.2.exe
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.2\obj\Debug\HomeWork5.2.pdb

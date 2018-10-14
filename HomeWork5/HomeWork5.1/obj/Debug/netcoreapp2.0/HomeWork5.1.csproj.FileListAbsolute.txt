@@ -1,0 +1,11 @@
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.1\bin\Debug\netcoreapp2.0\HomeWork5.1.deps.json
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.1\bin\Debug\netcoreapp2.0\HomeWork5.1.runtimeconfig.json
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.1\bin\Debug\netcoreapp2.0\HomeWork5.1.runtimeconfig.dev.json
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.1\bin\Debug\netcoreapp2.0\HomeWork5.1.dll
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.1\bin\Debug\netcoreapp2.0\HomeWork5.1.pdb
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.1\obj\Debug\netcoreapp2.0\HomeWork5.1.csproj.CoreCompileInputs.cache
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.1\obj\Debug\netcoreapp2.0\HomeWork5.1.AssemblyInfoInputs.cache
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.1\obj\Debug\netcoreapp2.0\HomeWork5.1.AssemblyInfo.cs
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.1\obj\Debug\netcoreapp2.0\HomeWork5.1.dll
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.1\obj\Debug\netcoreapp2.0\HomeWork5.1.pdb
+E:\workspace\CSharp\HomeWork2\HomeWork5\HomeWork5.1\obj\Debug\netcoreapp2.0\HomeWork5.1.csprojResolveAssemblyReference.cache
