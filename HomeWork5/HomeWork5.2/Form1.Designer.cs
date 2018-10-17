@@ -36,6 +36,12 @@
             this.textThRight = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.Feedback = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.Num = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.PreR = new System.Windows.Forms.TextBox();
+            this.PreL = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // textLength
@@ -113,11 +119,69 @@
             this.Feedback.TabIndex = 7;
             this.Feedback.Text = "：";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("汉仪楷体繁", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label4.Location = new System.Drawing.Point(1029, 143);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(103, 30);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "分叉数";
+            // 
+            // Num
+            // 
+            this.Num.Location = new System.Drawing.Point(1164, 143);
+            this.Num.Name = "Num";
+            this.Num.Size = new System.Drawing.Size(100, 25);
+            this.Num.TabIndex = 9;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("汉仪楷体繁", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label5.Location = new System.Drawing.Point(1008, 192);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(163, 30);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "比例（左）";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("汉仪楷体繁", 18F);
+            this.label6.Location = new System.Drawing.Point(1008, 243);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(163, 30);
+            this.label6.TabIndex = 11;
+            this.label6.Text = "比例（右）";
+            this.label6.Click += new System.EventHandler(this.label6_Click);
+            // 
+            // PreR
+            // 
+            this.PreR.Location = new System.Drawing.Point(1164, 243);
+            this.PreR.Name = "PreR";
+            this.PreR.Size = new System.Drawing.Size(100, 25);
+            this.PreR.TabIndex = 12;
+            // 
+            // PreL
+            // 
+            this.PreL.Location = new System.Drawing.Point(1164, 192);
+            this.PreL.Name = "PreL";
+            this.PreL.Size = new System.Drawing.Size(100, 25);
+            this.PreL.TabIndex = 13;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1276, 721);
+            this.Controls.Add(this.PreL);
+            this.Controls.Add(this.PreR);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.Num);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.Feedback);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textThRight);
@@ -144,6 +208,12 @@
         private System.Windows.Forms.TextBox textThRight;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label Feedback;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox Num;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox PreR;
+        private System.Windows.Forms.TextBox PreL;
     }
 }
 
