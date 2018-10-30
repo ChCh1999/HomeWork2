@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HomeWork6._1
+namespace HomeWork6
 {
     [Serializable]
     public class Order
@@ -20,6 +20,7 @@ namespace HomeWork6._1
         {
             set
             {
+                money = 0;
                 foreach (OrderDetails ele in ListOfProduct)
                 {
                     money += ele.Money;
@@ -49,7 +50,16 @@ namespace HomeWork6._1
     public class OrderService
     {
         public List<Order> ListOfOrder = new List<Order>();
-
+        //刷新钱数
+        public void update()
+        {
+            foreach(Order ele in ListOfOrder)
+            {
+                foreach (OrderDetails de in ele.ListOfProduct)
+                    de.Money = 0;
+                ele.Money = 0;
+            }
+        }
         //添加新订单
         public void NewOrder()
         {
@@ -451,22 +461,23 @@ namespace HomeWork6._1
         //从xml导入订单list
         public void Import(String Orderpath)
         {
-            
-            FileStream XmlPath = new FileStream(Orderpath, FileMode.Open, FileAccess.Read);
-            XmlSerializer xmlser = new XmlSerializer(typeof(List<Order>));
-            List<Order> temp = (List<Order>)xmlser.Deserialize(XmlPath);
-            foreach(Order ele in temp)
-            {
-                ListOfOrder.Add(ele);
-            }
+           
 
+                FileStream XmlPath = new FileStream(Orderpath, FileMode.Open, FileAccess.Read);
+                XmlSerializer xmlser = new XmlSerializer(typeof(List<Order>));
+                List<Order> temp = (List<Order>)xmlser.Deserialize(XmlPath);
+                foreach (Order ele in temp)
+                {
+                    ListOfOrder.Add(ele);
+                }
 
-            XmlPath.Close();
+                XmlPath.Close();
+
         }
         //初始化调试用数据
         public void init()
         {
-            Import(@"initOrder.txt");
+            //Import(@"initOrder.txt");
             ////调试用数据
             //OrderDetails pro1 = new OrderDetails();
             //pro1.TypeOfProduct = "car"; pro1.AmountOfProduct = 10; pro1.PriceOfProduct = 100000; pro1.Money = 0;
@@ -482,7 +493,6 @@ namespace HomeWork6._1
             //init3.Customer = "王五"; init3.OrderNum = "003"; init3.ListOfProduct.Add(pro3); init3.Money = 0;
             //ListOfOrder.Add(init1); ListOfOrder.Add(init2); ListOfOrder.Add(init3);
         }
-
         
        
     }
