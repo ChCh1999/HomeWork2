@@ -488,7 +488,7 @@ namespace HomeWork6
         {
             XmlSerializer xmlser = new XmlSerializer(typeof(List<Order>));
             FileStream mytype = new FileStream(
-                Orderpath, FileMode.Create, FileAccess.ReadWrite);
+                @"../../" + Orderpath, FileMode.Create, FileAccess.ReadWrite);
             xmlser.Serialize(mytype, OrderList);
             mytype.Close();
         }
@@ -496,7 +496,7 @@ namespace HomeWork6
         public bool Import(String Orderpath)
         {
             bool ifImport = true;
-            FileStream XmlPath = new FileStream(Orderpath, FileMode.Open, FileAccess.Read);
+            FileStream XmlPath = new FileStream(@"../../" + Orderpath, FileMode.Open, FileAccess.Read);
             XmlSerializer xmlser = new XmlSerializer(typeof(List<Order>));
             List<Order> temp = (List<Order>)xmlser.Deserialize(XmlPath);
             foreach (Order ele in temp)
@@ -529,16 +529,16 @@ namespace HomeWork6
             //ListOfOrder.Add(init1); ListOfOrder.Add(init2); ListOfOrder.Add(init3);
         }
 
-        public bool ToHTML(String InPatn,String OutPath)
+        public bool ToHTML(String InPath,String OutPath)
         {
             XmlDocument doc = new XmlDocument();
-            doc.Load(@".\AllOrder.txt");
+            doc.Load(@"../../"+InPath);
 
             XPathNavigator nav = doc.CreateNavigator();
             FileStream OutAsHTML = new FileStream(
                 OutPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             XslTransform xl = new XslTransform();
-            xl.Load("OrderCheck.xsl");
+            xl.Load("../../CheckOrder.xslt");
             xl.Transform(nav,null,OutAsHTML);
             return true;
         }
