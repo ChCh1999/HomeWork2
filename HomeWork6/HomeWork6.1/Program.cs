@@ -444,7 +444,7 @@ namespace HomeWork6._1
         {
             XmlSerializer xmlser = new XmlSerializer(typeof(List<Order>));
             FileStream mytype = new FileStream(
-                Orderpath,FileMode.Create,FileAccess.ReadWrite);
+                @"../../"+Orderpath,FileMode.Create,FileAccess.ReadWrite);
             xmlser.Serialize(mytype, OrderList);
             mytype.Close();
         }
@@ -452,7 +452,7 @@ namespace HomeWork6._1
         public void Import(String Orderpath)
         {
             
-            FileStream XmlPath = new FileStream(Orderpath, FileMode.Open, FileAccess.Read);
+            FileStream XmlPath = new FileStream(@"../../"+Orderpath, FileMode.Open, FileAccess.Read);
             XmlSerializer xmlser = new XmlSerializer(typeof(List<Order>));
             List<Order> temp = (List<Order>)xmlser.Deserialize(XmlPath);
             foreach(Order ele in temp)
