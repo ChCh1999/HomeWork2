@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ArrayOfOrder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Order>
+    <ListOfProduct>
+      <OrderDetails>
+        <TypeOfProduct>car</TypeOfProduct>
+        <PriceOfProduct>100000</PriceOfProduct>
+        <AmountOfProduct>10</AmountOfProduct>
+        <Money>1000000</Money>
+      </OrderDetails>
+    </ListOfProduct>
+    <OrderNum>20170325-001</OrderNum>
+    <Customer>张三</Customer>
+    <TelNum>12315645981</TelNum>
+    <Money>1000000</Money>
+  </Order>
+</ArrayOfOrder>

@@ -1,0 +1,501 @@
+﻿
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="origin" />
+<title>AI应用开发基础傻瓜书系列4-用线性回归来理解神经网络的训练过程 - UniversalAIPlatform - 博客园</title>
+<meta property="og:description" content="下面我们举一个简单的线性回归的例子来说明实际的反向传播和梯度下降的过程。完全看懂此文后，会对理解后续的文章有很大的帮助。 为什么要用线性回归举例呢？因为$y = wx+b$ （其中，y,w,x,b都是" />
+<link type="text/css" rel="stylesheet" href="/bundles/blog-common.css?v=-duj5vpGTntb85GJoM3iRI972XwWcI-j8zmqDzyfu2w1"/>
+<link id="MainCss" type="text/css" rel="stylesheet" href="/skins/LessIsMoreRight/bundle-LessIsMoreRight.css?v=XnHJrmT6UJMtyGfeJjiTUm7BxKWcwdJrxKsGy7z3YZ81"/>
+<link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/LessIsMoreRight/bundle-LessIsMoreRight-mobile.css?v=gjRHi0nc2Am4zjCRtNnfx--J64SCgNgmxcZYJIRpqqk1"/>
+<link title="RSS" type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/ms-uap/rss"/>
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/ms-uap/rsd.xml"/>
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/ms-uap/wlwmanifest.xml"/>
+<script src="//common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+<script type="text/javascript">var currentBlogApp = 'ms-uap', cb_enable_mathjax=true;var isLogined=false;</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], processClass: 'math', processEscapes: true },
+        TeX: { 
+            equationNumbers: { autoNumber: ['AMS'], useLabelIds: true }, extensions: ['extpfeil.js'] 
+        },
+        'HTML-CSS': { linebreaks: { automatic: true } },
+        SVG: { linebreaks: { automatic: true } }
+        });
+    </script><script src="//mathjax.cnblogs.com/2_7_2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="/bundles/blog-common.js?v=oVrWjmbP-rXxVp7O71kev8vWEZCetdwYaIziKHJCYc41" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+		
+<!--done-->
+<div class="title"><a id="Header1_HeaderTitle" class="headermaintitle" href="https://www.cnblogs.com/ms-uap/">MS-Universal AI Platform</a></div>
+<div class="subtitle">分享代码，改变世界</div>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li id="nav_sitehome"><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">博客园</a></li>
+<li id="nav_myhome"><a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/ms-uap/">首页</a></li>
+<li id="nav_newpost"><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+<li id="nav_contact"><a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/UniversalAIPlatform">联系</a></li>
+<li id="nav_rss"><a id="blog_nav_rss" class="menu" href="https://www.cnblogs.com/ms-uap/rss">订阅</a>
+<!--<a id="blog_nav_rss_image" class="aHeaderXML" href="https://www.cnblogs.com/ms-uap/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li id="nav_admin"><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul>
+
+		<div class="blogStats">
+			
+			<div id="blog_stats">
+<!--done-->
+随笔-115&nbsp;
+文章-0&nbsp;
+评论-1214&nbsp;
+</div>
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class = "post">
+		<h1 class = "postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="https://www.cnblogs.com/ms-uap/p/9983758.html">AI应用开发基础傻瓜书系列4-用线性回归来理解神经网络的训练过程</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown"><p>下面我们举一个简单的线性回归的例子来说明实际的反向传播和梯度下降的过程。完全看懂此文后，会对理解后续的文章有很大的帮助。</p>
+<p>为什么要用线性回归举例呢？因为<span class="math inline">\(y = wx+b\)</span> （其中，y,w,x,b都是标量）这个函数的形式和神经网络中的<span class="math inline">\(Y = WX + B\)</span>（其中，Y,W,X,B等都是矩阵）非常近似，可以起到用简单的原理理解复杂的事情的作用。</p>
+<h1 id="创造训练数据">创造训练数据</h1>
+<p>让我们先自力更生创造一些模拟数据：</p>
+<pre class="python"><code>import numpy as np
+import matplotlib.pyplot as plt
+# create mock up data
+# count of samples
+m = 100
+X = np.random.random(m)
+# create some offset as noise to simulate real data
+noise = np.random.normal(0,0.1,x.shape)
+W = 2
+B = 3
+Y = W * X + B + noise
+plt.plot(X, Y, &quot;b.&quot;)
+plt.show()</code></pre>
+<p>得到100个数据点如下：</p>
+<p><img src="https://img2018.cnblogs.com/blog/700062/201811/700062-20181119162107854-241397869.png" /></p>
+<p>好了，模拟数据制作好了，目前X是一个100个元素的集合，里面有0~100之间的随机x点，Y是一个100个元素的集合，里面有对应到每个x上的<span class="math inline">\(y=2x+3\)</span>的值，然后再加一个或正或负的上下偏移作为噪音，来满足对实际数据的模拟效果（因为大部分真实世界的生产数据从来都不是精确的，精确只存在于数学领域）。</p>
+<p>现在我们要忘记这些模拟数据（样本值）是如何制作出来的，也就是要忘记W,B的值。我们就假设这是实际应用中收集到的模拟数据，但是我们并不知道它的原始函数是什么参数，只知道是公式<span class="math inline">\(y = wx + b\)</span>，我们的任务就是要根据这些样本值，通过神经网络训练的方式，得到w和b的值。注意这里x和y是样本的输入和输出，不是目标变量，这一点和常见的初等数学题不一样，要及时转变概念。</p>
+<h1 id="训练方式的选择">训练方式的选择</h1>
+<p>接下来，我们会用两种方式来训练神经网络（神经元）：</p>
+<ol>
+<li>把所有样本逐个地输入网络训练</li>
+<li>把所有样本整批的输入网络训练</li>
+</ol>
+<p>Pseudo code伪代码如下：</p>
+<p>第一种方式：逐个样本训练</p>
+<pre class="python"><code>for 每个样本x,y:
+    标量前向计算得到z值 = wx+b
+    计算损失(optional)
+    计算w的梯度（输入Z,Y,X的值）
+    计算b的梯度（输入Z,Y,X的值）
+    更新w,b的值</code></pre>
+<p>第一种方式的好处是每次计算都是标量计算，不涉及到矢量或者矩阵，便于大家理解。但是有个问题就是，如果最后几个样本的误差较大的话，会把前面已经训练得差不多的w,b的值变坏。</p>
+<p>第二种方式：批量样本训练</p>
+<pre class="python"><code>while 停止条件不满足
+    矩阵前向计算得到Z值 = wX+b（其中X是所有样本的一个数组/集合）
+    计算损失(optional)
+    计算w的梯度
+    计算b的梯度
+    更新w,b的值</code></pre>
+<p>第二种方式我们用了矩阵和标量的运算，以及矩阵和矩阵的运算。由于是批量样本做为输入，所以某些个样本的误差不会对整体造成影响。</p>
+<h1 id="使用第一种方式训练">使用第一种方式训练</h1>
+<h2 id="定义神经网络结构">定义神经网络结构</h2>
+<p>对于简单的线性回归问题，我们使用单层网络单个神经元就足够了。而且由于是线性的，我们不需要定义激活函数，这就大大简化了程序，而且便于大家循序渐进地理解。</p>
+<pre class="python"><code>def forward_calculation(w,b,X):
+    z = w * x + b
+    return z</code></pre>
+<p>其中，由于X是一组数据（100个），所以它是一个矢量，或者理解为一维数组。w和b都是一个标量，Z的计算结果也是一个矢量，尺寸和X一样。</p>
+<p>上面的写法，实际上是每次迭代都用所有的样本做训练，因为输入是X，是所有样本的集合。还有另外一种做法，就是每次训练，只用一个训练样本，那么就需要在主循环中进行调度，一次使用一个样本。</p>
+<h2 id="定义代价函数">定义代价函数</h2>
+<p>我们用传统的均方差函数: <span class="math inline">\(loss = \frac{1}{2}(z-y)^2\)</span>，其中，z是每一次迭代的预测输出，y是样本标签数据。这个损失函数的直观理解如下图：</p>
+<p><img src="https://img2018.cnblogs.com/blog/700062/201811/700062-20181119162132199-337548447.png" /></p>
+<p>假设我们计算出初步的结果是红色虚线所示，这条直线是否合适呢？我们来计算一下图中每个点到这条直线的距离（黄色线），把这些距离的值都加起来（都是正数，不存在互相抵消的问题）成为loss，然后想办法不断改变红色直线的角度和位置，让loss最小，就意味着整体偏差最小，那么最终的那条红色直线就是我们要的结果。</p>
+<p>下面是Python的code，用于计算损失：</p>
+<pre class="python"><code># w:weight, y:sample data, m:count of sample
+def loss_calculation(z,y):
+    loss = (z-y)**2    # cannot use (Z-Y)^2
+    cost = loss/2
+    return cost</code></pre>
+<p>其实，这个loss值可以不用计算的，因为我们使用这个损失函数的目的是要反向传播，而不是真的用这个loss值去做什么具体的运算。具体的计算是体现在求导梯度的函数中。</p>
+<p>搞明白为何用均方差MSE函数后，我们再看看MSE如何应用到反向传播中。</p>
+<h2 id="定义针对w的梯度函数">定义针对w的梯度函数</h2>
+<p>因为：</p>
+<p><span class="math display">\[z = wx+b\]</span></p>
+<p><span class="math display">\[loss = \frac{1}{2}(z-y)^2\]</span></p>
+<p>所以我们用loss的值作为基准，去求w对它的影响，也就是loss对w的偏导数：</p>
+<p><span class="math display">\[
+\frac{\partial{loss}}{\partial{w}} = \frac{\partial{loss}}{\partial{z}}*\frac{\partial{z}}{\partial{w}}
+\]</span></p>
+<p>其中：</p>
+<p><span class="math display">\[
+\frac{\partial{loss}}{\partial{z}} = \frac{\partial{}}{\partial{z}}[\frac{1}{2}(z-y)^2] = z-y
+\]</span></p>
+<p>而：</p>
+<p><span class="math display">\[
+\frac{\partial{z}}{\partial{w}} = \frac{\partial{}}{\partial{w}}(wx+b) = x
+\]</span></p>
+<p>所以：</p>
+<p><span class="math display">\[
+\frac{\partial{loss}}{\partial{w}} = \frac{\partial{loss}}{\partial{z}}*\frac{\partial{z}}{\partial{w}} = (z-y)x
+\]</span></p>
+<p>写成code：</p>
+<pre class="python"><code># w:weight, X,Y:sample data, m:count of sample
+def dJw(z,y,x):
+    dw = (z-y)*x
+    return dw</code></pre>
+<h2 id="定义针对b的梯度函数">定义针对b的梯度函数</h2>
+<p>因为：</p>
+<p><span class="math display">\[Z = wX+b\]</span></p>
+<p><span class="math display">\[loss = \frac{1}{2}(Z-Y)^2\]</span></p>
+<p>所以我们用loss的值作为基准，去求w对它的影响，也就是loss对w的偏导数：</p>
+<p><span class="math display">\[
+\frac{\partial{loss}}{\partial{b}} = \frac{\partial{loss}}{\partial{Z}}*\frac{\partial{Z}}{\partial{b}}
+\]</span></p>
+<p>其中：</p>
+<p><span class="math display">\[
+\frac{\partial{loss}}{\partial{Z}} = \frac{\partial{}}{\partial{Z}}[(z-y)^2] = z-y
+\]</span></p>
+<p>而：</p>
+<p><span class="math display">\[
+\frac{\partial{z}}{\partial{b}} = \frac{\partial{(wx+b)}}{\partial{b}} = 1
+\]</span></p>
+<p>所以：</p>
+<p><span class="math display">\[
+\frac{\partial{loss}}{\partial{b}} = \frac{\partial{loss}}{\partial{Z}}*\frac{\partial{Z}}{\partial{b}} = z-y
+\]</span></p>
+<pre class="python"><code># Z:predication value, Y:sample data, m:count of sample
+def dJb(z,y):
+    db = z - y
+    return db</code></pre>
+<h2 id="每次迭代后更新wb的值">每次迭代后更新w,b的值</h2>
+<pre class="python"><code>def update_weights(w, b, dw, db, eta):
+    w = w - eta*dw
+    b = b - eta*db
+    return w,b</code></pre>
+<p>eta在本程序中恒等于0.1，这是随机梯度下降法。也可以在迭代到一定次数后，把eta的值逐步减小，变成0.01，这样会形成开始时大步前进，到后面时小步快跑的局面，利于训练准确度提高。</p>
+<h2 id="初始化变量及参数">初始化变量及参数</h2>
+<pre class="python"><code># initialize_data
+# step for each iteration
+eta = 0.1
+# set w,b=0, you can set to others values to have a try
+w = 0
+b = 0</code></pre>
+<h2 id="程序主循环">程序主循环</h2>
+<p>j是外循环的次数，先只训练一次看看效果。</p>
+<pre class="python"><code>for j in range(1):
+    for i in range(m):
+        # get x and y value for one sample
+        x = X[i]
+        y = Y[i]
+        # get z from x,y
+        z = forward_calculation(w, b, x)
+        # calculate lost (optional)
+        #loss = loss_calculation(z, y)
+        # calculate gradient of w and b
+        dw = dJw(z, y, x)
+        db = dJb(z, y)
+        # update w,b
+        w, b = update_weights(w, b, dw, db, eta)
+        print(w,b)</code></pre>
+<p>程序运行结果如下：</p>
+<pre class="python"><code>0.11278289694938642 0.34606738038593576
+0.4048467024747609 0.7556962791118582
+0.46002740765953076 1.0072739217390403
+0.6629665909817659 1.3133134892057239
+......
+1.8800223947881818 3.054203494854314
+1.8798053702497237 3.0511601599536635
+1.8722710744969668 3.0374415142130298
+1.8761825822484357 3.0437127218759885</code></pre>
+<p>目标是w=2，b=3，看上去误差还比较大。我们设置外循环次数为3，再看看效果。</p>
+<pre class="python"><code>#for j in range(1):
+for j in range(3):</code></pre>
+<pre class="python"><code>......
+1.950551908871318 3.01593409919309
+1.9512023724525054 3.0181474143771783
+1.9512839743332555 3.0189251294358055
+1.950145626519112 3.0148986986722246
+1.9387958775488612 3.0023925945934153</code></pre>
+<p>貌似距离理想值更进了一步。但其实这两次的结果不可比，因为我们每次都用新的随机数做为样本，而不是同一批随机数。所以大家可以自己试着把随机数保存到文件里，每次训练时读出来，这样就可以比较效果了。</p>
+<h1 id="使用第二种方式训练">使用第二种方式训练</h1>
+<pre class="python"><code># use all the samples as a batch to train, then iteration on batch
+import numpy as np
+import matplotlib.pyplot as plt
+# create mock up data
+# count of samples
+m = 100
+X = np.random.random(m)
+# create some offset as noise to simulate real data
+noise = np.random.normal(0,0.1,X.shape)
+W = 2
+B = 3
+Y = X * W + B + noise
+plt.plot(X, Y, &quot;b.&quot;)
+plt.show()
+
+
+# 由于X是一组数据（100个），所以它是一个矢量，或者理解为一维数组。w和b都是一个标量，Z的计算结果也是一个矢量，尺寸和X一样。
+def forward_calculation(w,b,X):
+    Z = w * X + b
+    return Z
+
+# 由于是m个训练样本批量训练，所以结果要除以m，下同
+# 注意X,Y,Z都是数组
+def loss_calculation(Z,Y,m):
+    loss = (Z-Y)**2    # cannot use (Z-Y)^2
+    cost = loss.sum()/m/2
+    return cost
+
+def dJw(Z,Y,X,m):
+    q = (Z-Y)*X
+    dw = sum(q)/m
+    return dw
+
+def dJb(Z,Y,m):
+    q = Z - Y
+    db = sum(q)/m
+    return db
+
+# w,b是标量，所以代码和第一种方式相同
+
+def update_weights(w, b, dw, db, eta):
+    w = w - eta*dw
+    b = b - eta*db
+    return w,b
+
+# initialize_data
+# step for each iteration
+eta = 0.1
+# set w,b=0, you can set to others values to have a try
+w = 0
+b = 0
+# condition 1 to stop iteration: when Q - prevQ &lt; error
+error = 1e-10
+prevQ = 10
+# condition 2 to stop iteration
+max_iteration = 10000
+# counter of iteration
+iteration = 0
+
+# condition 2 to stop
+while iteration &lt; max_iteration:
+    # using current w,b to calculate Z
+    Z = forward_calculation(w,b,X)
+    # compare Z and Y
+    Q = loss_calculation(Z, Y, m)
+    # get gradient value
+    dW = dJw(Z, Y, X, m)
+    dB = dJb(Z, Y, m)
+    # update w and b
+    w, b = update_weights(w, b, dW, dB, eta)
+    print(iteration,w,b)
+    iteration += 1
+    # condition 1 to stop
+
+#    if abs(Q - prevQ) &lt; error:
+#        break
+    prevQ = Q
+
+print(Q,prevQ)
+print(w,b)</code></pre>
+<h2 id="代价函数的微小变化">代价函数的微小变化</h2>
+<p>我们用传统的均方差函数: <span class="math inline">\(loss = \frac{1}{2}(Z-Y)^2\)</span>，其中，Z是每一次迭代的预测输出，Y是样本标签数据。我们使用所有样本参与训练，因此损失函数实际为：</p>
+<p><span class="math display">\[loss = \frac{1}{2m}\sum_{i=1}^{m}(Z_i - Y_i) ^ 2\]</span></p>
+<p>其中的分母中有个2，实际上是想在求导数时把这个2约掉，没有什么原则上的区别。</p>
+<p>由于loss是所有样本的集合，我们先对其中的所有值求总和，样本数量是m，然后除以m来求一个平均值。</p>
+<p>其实，这个loss值可以不用计算的，因为我们使用这个损失函数的目的是要反向传播，而不是真的用这个loss值去做什么具体的运算。具体的计算是体现在求导梯度的函数中。</p>
+<h2 id="定义针对w的梯度函数-1">定义针对w的梯度函数</h2>
+<p>因为：</p>
+<p><span class="math display">\[Z = wX+b\]</span></p>
+<p><span class="math display">\[loss = \frac{1}{2m}(Z-Y)^2\]</span></p>
+<p>所以我们用loss的值作为基准，去求w对它的影响，也就是loss对w的偏导数：</p>
+<p><span class="math display">\[
+\frac{\partial{loss}}{\partial{w}} = \frac{\partial{loss}}{\partial{Z}}*\frac{\partial{Z}}{\partial{w}}
+\]</span></p>
+<p>其中：</p>
+<p><span class="math display">\[
+\frac{\partial{loss}}{\partial{Z}} = \frac{\partial{}}{\partial{Z}}[\frac{1}{2m}(Z-Y)^2] = \frac{1}{m}(Z-Y)
+\]</span></p>
+<p>而：</p>
+<p><span class="math display">\[
+\frac{\partial{z}}{\partial{w}} = \frac{\partial{}}{\partial{w}}(wX+b) = X
+\]</span></p>
+<p>所以：</p>
+<p><span class="math display">\[
+\frac{\partial{loss}}{\partial{w}} = \frac{\partial{loss}}{\partial{Z}}*\frac{\partial{Z}}{\partial{w}} = \frac{1}{m}(Z-Y)X
+\]</span></p>
+<p>写成code：</p>
+<pre class="python"><code># w:weight, X,Y:sample data, m:count of sample
+def dJw(Z,Y,X,m):
+    q = (Z-Y)*X
+    # because w is a scalar, so dw should be a scalar too
+    dw = sum(q)/m
+    return dw</code></pre>
+<h2 id="定义针对b的梯度函数-1">定义针对b的梯度函数</h2>
+<p>因为：</p>
+<p><span class="math display">\[Z = wX+b\]</span></p>
+<p><span class="math display">\[loss = \frac{1}{2m}(Z-Y)^2\]</span></p>
+<p>所以我们用loss的值作为基准，去求w对它的影响，也就是loss对w的偏导数：</p>
+<p><span class="math display">\[
+\frac{\partial{loss}}{\partial{b}} = \frac{\partial{loss}}{\partial{Z}}*\frac{\partial{Z}}{\partial{b}}
+\]</span></p>
+<p>其中：</p>
+<p><span class="math display">\[
+\frac{\partial{loss}}{\partial{Z}} = \frac{\partial{}}{\partial{Z}}[\frac{1}{2m}(Z-Y)^2] = \frac{1}{m}(Z-Y)
+\]</span></p>
+<p>而：</p>
+<p><span class="math display">\[
+\frac{\partial{Z}}{\partial{b}} = \frac{\partial{(wX+b)}}{\partial{b}} = 1
+\]</span></p>
+<p>所以：</p>
+<p><span class="math display">\[
+\frac{\partial{loss}}{\partial{b}} = \frac{\partial{loss}}{\partial{Z}}*\frac{\partial{Z}}{\partial{b}} = \frac{1}{m}(Z-Y)
+\]</span></p>
+<pre class="python"><code># Z:predication value, Y:sample data, m:count of sample
+def dJb(Z,Y,m):
+    q = Z - Y
+    db = sum(q)/m
+    return db</code></pre>
+<p>程序运行结果如下：</p>
+<pre class="python"><code>0 0.204633398307696 0.3943112518285292
+1 0.3842082815875446 0.7395242688455653
+2 0.5418315944143854 1.0417326666889068
+3 0.6802247732855068 1.3062739239107688
+......
+935 2.014844080911897 2.9912924671594148
+936 2.014846970318595 2.9912909940330077
+937 2.014849838514886 2.991289531720451
+938 2.014852685656469 2.991288080142363
+939 2.0148555118979017 2.9912866392199446
+940 2.014858317392607 2.9912852088749755
+941 2.0148611022928815 2.9912837890298087
+0.004078652569361402 0.004078652668164296
+2.0148611022928815 2.9912837890298087</code></pre>
+<p>训练过程迭代了941次，loss的前后差值小于1e-10了，达到了停止条件。可以看到最后w = 2.0148, b = 2.9912, 非常接近W=2, B=3的真实值。</p>
+<p>也可以注释掉condition 1，让迭代达到10000次，但其实结果并不会好到哪里去。</p>
+<p>孔子说：点赞是人类的美德！如果觉得有用，关闭网页前，麻烦您给点个赞！然后准备学习下一周的内容。</p>
+</div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory"></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info">
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"></div>
+</div>
+
+
+		</div>
+		<div class = "postDesc">posted @ <span id="post-date">2018-11-20 14:02</span> <a href='https://www.cnblogs.com/ms-uap/'>UniversalAIPlatform</a> 阅读(<span id="post_view_count">...</span>) 评论(<span id="post_comment_count">...</span>)  <a href ="https://i.cnblogs.com/EditPosts.aspx?postid=9983758" rel="nofollow">编辑</a> <a href="#" onclick="AddToWz(9983758);return false;">收藏</a></div>
+	</div>
+	<script src="//common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script><script>markdown_highlight();</script><script type="text/javascript">var allowComments=true,cb_blogId=207360,cb_entryId=9983758,cb_blogApp=currentBlogApp,cb_blogUserGuid='0ccd6350-637b-e411-b908-9dcfd8948a71',cb_entryCreatedDate='2018/11/20 14:02:00';loadViewCount(cb_entryId);var cb_postType=1;</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id='comment_form' class='commentform'>
+<a name='commentform'></a>
+<div id='divCommentShow'></div>
+<div id='comment_nav'><span id='span_refresh_tips'></span><a href='javascript:void(0);' onclick='return RefreshCommentList();' id='lnk_RefreshComments' runat='server' clientidmode='Static'>刷新评论</a><a href='#' onclick='return RefreshPage();'>刷新页面</a><a href='#top'>返回顶部</a></div>
+<div id='comment_form_container'></div>
+<div class='ad_text_commentbox' id='ad_text_under_commentbox'></div>
+<div id='ad_t2'></div>
+<div id='opt_under_post'></div>
+<div id='cnblogs_c1' class='c_ad_block'></div>
+<div id='under_post_news'></div>
+<script async='async' src='https://www.googletagservices.com/tag/js/gpt.js'></script>
+<script>
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+</script>
+
+<script>
+  googletag.cmd.push(function() {
+    googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1539008685004-0').addService(googletag.pubads());
+    googletag.pubads().enableSingleRequest();
+    googletag.enableServices();
+  });
+</script>
+<div id='cnblogs_c2' class='c_ad_block'>
+    <div id='div-gpt-ad-1539008685004-0' style='height:60px; width:468px;'>
+    <script>
+    if (new Date() >= new Date(2018, 9, 13)) {
+        googletag.cmd.push(function() { googletag.display('div-gpt-ad-1539008685004-0'); });
+    }
+    </script>
+    </div>
+</div>
+<div id='under_post_kb'></div>
+<div id='HistoryToday' class='c_ad_block'></div>
+<script type='text/javascript'>
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="calendar"><div id="blog-calendar" style="display:none"></div><script type="text/javascript">loadBlogDefaultCalendar();</script></div>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright &copy;2018 UniversalAIPlatform
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+</body>
+</html>

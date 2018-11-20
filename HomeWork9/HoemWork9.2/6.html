@@ -1,0 +1,648 @@
+﻿
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="never" />
+<title>jenkins X实践系列（1） —— 背景知识 - JadePeng - 博客园</title>
+<meta property="og:description" content="jx是云原生CICD，devops的一个最佳实践之一，目前在快速的发展成熟中。最近调研了JX，准备写一个jx实践系列，这里为第一篇，介绍jx用到的一些相关组件，作为了解jx的背景知识。" />
+<link type="text/css" rel="stylesheet" href="/bundles/blog-common.css?v=-duj5vpGTntb85GJoM3iRI972XwWcI-j8zmqDzyfu2w1"/>
+<link id="MainCss" type="text/css" rel="stylesheet" href="/skins/CodingLife/bundle-CodingLife.css?v=g4Oce5UBaUn_FUwadcT09ICEg5NkULQGtUpNhTtrI8U1"/>
+<link type="text/css" rel="stylesheet" href="/blog/customcss/42033.css?v=sBA%2fRZCxbIZnmero%2fOJcAEMX%2f88%3d"/>
+<link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="/skins/CodingLife/bundle-CodingLife-mobile.css?v=Xay8b9tTSw814nBzbOgvS6rrbcxrobMhvHJHdZAO9vI1"/>
+<link title="RSS" type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/xiaoqi/rss"/>
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/xiaoqi/rsd.xml"/>
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/xiaoqi/wlwmanifest.xml"/>
+<script src="//common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+<script type="text/javascript">var currentBlogApp = 'xiaoqi', cb_enable_mathjax=false;var isLogined=false;</script>
+<script src="/bundles/blog-common.js?v=oVrWjmbP-rXxVp7O71kev8vWEZCetdwYaIziKHJCYc41" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="https://www.cnblogs.com/xiaoqi/"><img id="blogLogo" src="/Skins/custom/images/logo.gif" alt="返回主页" /></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="https://www.cnblogs.com/xiaoqi/">jqpeng的技术记事本</a></h1>
+<h2>新的一年，虎虎生威，</h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">博客园</a></li>
+<li><a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/xiaoqi/">首页</a></li>
+<li><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+<li><a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/JadePeng">联系</a></li>
+<li>
+<!----></li>
+<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul>
+		<div class="blogStats">
+			
+			<div id="blog_stats">
+<span id="stats_post_count">随笔 - 106&nbsp; </span>
+<span id="stats_article_count">文章 - 2&nbsp; </span>
+<span id="stats-comment_count">评论 - 297</span>
+</div>
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class = "post">
+		<h1 class = "postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="https://www.cnblogs.com/xiaoqi/p/jenkins-x-part1.html">jenkins X实践系列（1） —— 背景知识</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown"><p>本文介绍jenkins X（以下简称jx）相关的背景技术。</p>
+<h2 id="jenkins-x-简介">jenkins X 简介</h2>
+<p><a href="https://jenkins-x.io/">Jenkins X</a> 是一个高度集成化的CI/CD平台，基于Jenkins和Kubernetes实现，旨在解决微服务体系架构下的云原生应用的持续交付的问题，简化整个云原生应用的开发、运行和部署过程。</p>
+<p>jx 基于gitops，将k8s分为preview、staging、production几个环境，</p>
+<p><img src="https://jenkins-x.io/images/gitops.png" /></p>
+<p>详细的devops可以查看下图：</p>
+<p><img src="https://jenkins-x.io/images/overview.png" /></p>
+<p>jx是云原生CICD，devops的一个最佳实践之一，目前在快速的发展成熟中。最近调研了JX，准备写一个jx实践系列，这里为第一篇，介绍jx用到的一些相关组件，作为了解jx的背景知识。</p>
+<h2 id="jenkins-pipeline">jenkins pipeline</h2>
+<p>jx使用Jenkins Pipeline来执行CI流程，Jenkins Pipeline是jenkins的一套插件，支持将连续输送Pipeline实施和整合到Jenkins。Pipeline 提供了一组可扩展的工具，用于通过Pipeline DSL为代码创建简单到复杂的传送Pipeline 。</p>
+<p>Jenkinsfile pipeline使用Groovy脚本来定义CI流程，来看一个jx生成的实际案例：</p>
+<pre class="groovy"><code>pipeline {
+    agent {
+      label &quot;jenkins-maven&quot;
+    }
+    environment {
+      ORG               = &#39;jqpeng&#39;
+      APP_NAME          = &#39;x-nginx&#39;
+      CHARTMUSEUM_CREDS = credentials(&#39;jenkins-x-chartmuseum&#39;)
+    }
+    stages {
+      stage(&#39;CI Build and push snapshot&#39;) {
+        when {
+          branch &#39;PR-*&#39;
+        }
+        environment {
+          PREVIEW_VERSION = &quot;0.0.0-SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER&quot;
+          PREVIEW_NAMESPACE = &quot;$APP_NAME-$BRANCH_NAME&quot;.toLowerCase()
+          HELM_RELEASE = &quot;$PREVIEW_NAMESPACE&quot;.toLowerCase()
+        }
+        steps {
+          container(&#39;maven&#39;) {
+            sh &quot;mvn versions:set -DnewVersion=$PREVIEW_VERSION&quot;
+            sh &quot;mvn package -DskipTests&quot;
+            sh &#39;export VERSION=$PREVIEW_VERSION &amp;&amp; skaffold build -f skaffold.yaml&#39;
+
+
+            sh &quot;jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$PREVIEW_VERSION&quot;
+          }
+
+          dir (&#39;./charts/preview&#39;) {
+           container(&#39;maven&#39;) {
+            sh &#39;helm init --client-only --stable-repo-url=http://charts.iflyresearch.com/&#39;
+           
+             sh &quot;make preview&quot;
+             sh &quot;jx preview --app $APP_NAME --dir ../..&quot;
+           }
+          }
+        }
+      }
+      stage(&#39;Build Release&#39;) {
+        when {
+          branch &#39;master&#39;
+        }
+        steps {
+          container(&#39;maven&#39;) {
+            // ensure we&#39;re not on a detached head
+            sh &quot;git checkout master&quot;
+            sh &quot;git config --global credential.helper store&quot;
+
+            sh &quot;jx step git credentials&quot;
+            // so we can retrieve the version in later steps
+            sh &quot;echo \$(jx-release-version) &gt; VERSION&quot;
+            sh &quot;mvn versions:set -DnewVersion=\$(cat VERSION)&quot;
+          }
+          dir (&#39;./charts/x-nginx&#39;) {
+            container(&#39;maven&#39;) {
+              sh &quot;make tag&quot;
+            }
+          }
+          container(&#39;maven&#39;) {
+            sh &#39;mvn package -DskipTests&#39;
+
+            sh &#39;export VERSION=`cat VERSION` &amp;&amp; skaffold build -f skaffold.yaml&#39;
+
+
+            sh &quot;jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:\$(cat VERSION)&quot;
+          }
+        }
+      }
+      stage(&#39;Promote to Environments&#39;) {
+        when {
+          branch &#39;master&#39;
+        }
+        steps {
+          dir (&#39;./charts/x-nginx&#39;) {
+            container(&#39;maven&#39;) {
+              sh &#39;jx step changelog --version v\$(cat ../../VERSION)&#39;
+
+              sh &#39;helm init --client-only --stable-repo-url=http://charts.iflyresearch.com/&#39;
+
+              // release the helm chart
+              sh &#39;jx step helm release&#39;
+
+              // promote through all &#39;Auto&#39; promotion Environments
+              sh &#39;jx promote -b --all-auto --timeout 1h --version \$(cat ../../VERSION)&#39;
+            }
+          }
+        }
+      }
+    }
+    post {
+        always {
+            cleanWs()
+        }
+    }
+  }
+</code></pre>
+<ul>
+<li>pipeline 定义是一个pipeline</li>
+<li>environment 定义环境变量</li>
+<li>stages 定义流程
+<ul>
+<li>stage('CI Build and push snapshot') 定义子流程
+<ul>
+<li>when 匹配条件</li>
+<li>environment 定义子流程环境变量</li>
+<li>steps 定义流程制定的具体步骤
+<ul>
+<li>container('maven') 使用maven镜像来构建</li>
+<li>sh &quot;git checkout master&quot; 在maven镜像执行命令</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>其余的看字面意思就可以理解了</li>
+</ul>
+<p>执行构建后，打开jenkins web页面，可以看到构建pipelines</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/pic/2018/%7Bmonth%7D%7D-19/1542618389273.png" alt="Pipeline" /></p>
+<p>同时可以查看Blue Ocean页面</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2018/11-19/1542618708869.png" alt="Blue Ocean" /></p>
+<h2 id="helm与charts">helm与charts</h2>
+<p>Helm是管理Kubernetes charts的工具，charts是预先配置好的安装包资源，有点类似于Ubuntu的APT和CentOS中的yum。</p>
+<p>可以使用helm来：</p>
+<ul>
+<li>查找并使用已<a href="https://github.com/helm/charts">打包为Helm charts的热门应用</a>在Kubernetes中运行</li>
+<li>封装并分享自己的应用</li>
+<li>创建可重复的Kubernetes应用程序版本</li>
+<li>智能管理应用依赖</li>
+<li>管理Helm软件包的版本</li>
+</ul>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2018/11-19/1542619383278.png" alt="HELM" /></p>
+<h3 id="安装helm">安装helm</h3>
+<p>安装helm很简单，下载离线二进制包，加压后加入path即可</p>
+<pre class="bash"><code>wget https://kubernetes-helm.storage.googleapis.com/helm-canary-linux-amd64.tar.gz</code></pre>
+<p>helm需要服务端Tiller支持，需要安装到集群中，可以使用下面的命令来安装最新的2.11版本：</p>
+<pre class="bash?linenums"><code>helm init --tiller-image anjia0532/kubernetes-helm.tiller:v2.11.0 --skip-refresh</code></pre>
+<p>参见：<a href="https://www.cnblogs.com/xiaoqi/p/gcr-io-and-k8s-gcr-io.html">google gcr.io、k8s.gcr.io 国内镜像</a></p>
+<h3 id="helm错误解决">helm错误解决</h3>
+<h4 id="helm-error-no-available-release-name-found">Helm: Error: no available release name found</h4>
+<p>helm报这个错误 Helm: Error: no available release name found<br />
+错误的原因大概是因为 tiller没有正确的角色权限。<br />
+执行以下命令可解决这个问题。</p>
+<pre class="bash"><code>kubectl create serviceaccount --namespace kube-system tiller
+kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+kubectl patch deploy --namespace kube-system tiller-deploy -p &#39;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;serviceAccount&quot;:&quot;tiller&quot;}}}}&#39;</code></pre>
+<h2 id="charts入门">charts入门</h2>
+<p>先来看一个jx生成的charts文件：</p>
+<pre class="bash"><code>tree charts/
+
+charts/
+├── preview
+│   ├── Chart.yaml
+│   ├── Makefile
+│   ├── requirements.yaml
+│   └── values.yaml
+├── x-nginx
+│   ├── Chart.yaml
+│   ├── Makefile
+│   ├── README.md
+│   ├── templates
+│   │   ├── deployment.yaml
+│   │   ├── _helpers.tpl
+│   │   ├── NOTES.txt
+│   │   └── service.yaml
+│   └── values.yaml
+</code></pre>
+<h3 id="chart.yaml">Chart.yaml</h3>
+<p>chart文件首先是一个Chart.yaml描述文件，描述chart的基本信息，包含name，version等描述信息</p>
+<pre class="groovy"><code>cat charts/x-nginx/Chart.yaml 
+
+apiVersion: v1
+description: A Helm chart for Kubernetes
+icon: https://raw.githubusercontent.com/jenkins-x/jenkins-x-platform/master/images/java.png
+name: x-nginx
+version: 0.1.0-SNAPSHOT
+~                         </code></pre>
+<h3 id="templates">templates</h3>
+<p>templates存放的是模板文件，遵循<a href="https://golang.org/pkg/text/template/">Go template</a>语法，结合values.yaml的数据，可以生成部署到K8S所需的yaml配置文件。</p>
+<p>来简单看下deployment.yaml：</p>
+<pre class="yaml"><code>apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template &quot;fullname&quot; . }}
+  labels:
+    draft: {{ default &quot;draft-app&quot; .Values.draft }}
+    chart: &quot;{{ .Chart.Name }}-{{ .Chart.Version | replace &quot;+&quot; &quot;_&quot; }}&quot;
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        draft: {{ default &quot;draft-app&quot; .Values.draft }}
+        app: {{ template &quot;fullname&quot; . }}
+{{- if .Values.podAnnotations }}
+      annotations:
+{{ toYaml .Values.podAnnotations | indent 8 }}
+{{- end }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: &quot;{{ .Values.image.repository }}:{{ .Values.image.tag }}&quot;
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.service.internalPort }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}</code></pre>
+<p>注意，模板遵循Go template语法，都是go生态，可以稍微学习了解下。上面的模板是Deployment的yaml配置文件，大括号包裹起来的部分是Go template，对应的Values是在<code>values.yaml</code>文件中定义的：</p>
+<pre class="yaml"><code># Default values for Maven projects.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+image:
+  repository: draft
+  tag: dev
+  pullPolicy: IfNotPresent
+service:
+  name: x-nginx
+  type: ClusterIP
+  externalPort: 80
+  internalPort: 8080
+  annotations:
+    fabric8.io/expose: &quot;true&quot;
+    fabric8.io/ingress.annotations: &quot;kubernetes.io/ingress.class: nginx&quot;
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 400m
+    memory: 512Mi
+terminationGracePeriodSeconds: 10</code></pre>
+<p>简单学习下常用语法：</p>
+<ul>
+<li>{{ .Values.replicaCount }} 对应<code>values.yaml</code>中的replicaCount，通过{{ .Values.$varname }} 语法引用</li>
+<li>{{ default &quot;draft-app&quot; .Values.draft }} 如果draft没有定义，使用默认的&quot;draft-app&quot;</li>
+<li>{{- if .Values.podAnnotations }} {{- end }} 条件语法</li>
+<li>{{ toYaml .Values.podAnnotations | indent 8 }} 输出为yaml，indent指定缩进</li>
+</ul>
+<h3 id="验证模板">验证模板</h3>
+<p>charts通过go模板渲染后，最后生成yaml格式部署文件，可以使用<code>helm install --dry-run --debug &lt;chart_dir&gt;</code>命令来验证chart配置，查看最终生成的配置文件。</p>
+<pre class="bash"><code>$:~/workspace/xnginx/charts/x-nginx$ helm install --dry-run --debug .
+[debug] Created tunnel using local port: &#39;40868&#39;
+
+[debug] SERVER: &quot;127.0.0.1:40868&quot;
+
+[debug] Original chart version: &quot;&quot;
+[debug] CHART PATH: /workspace/xnginx/charts/x-nginx
+
+NAME:   messy-seastar
+REVISION: 1
+RELEASED: Tue Nov 20 09:20:39 2018
+CHART: x-nginx-0.1.0-SNAPSHOT
+USER-SUPPLIED VALUES:
+{}
+
+COMPUTED VALUES:
+image:
+  pullPolicy: IfNotPresent
+  repository: draft
+  tag: dev
+replicaCount: 1
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 400m
+    memory: 512Mi
+service:
+  annotations:
+    fabric8.io/expose: &quot;true&quot;
+    fabric8.io/ingress.annotations: &#39;kubernetes.io/ingress.class: nginx&#39;
+  externalPort: 80
+  internalPort: 8080
+  name: x-nginx
+  type: ClusterIP
+terminationGracePeriodSeconds: 10
+
+HOOKS:
+MANIFEST:
+
+---
+# Source: x-nginx/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: x-nginx
+  labels:
+    chart: &quot;x-nginx-0.1.0-SNAPSHOT&quot;
+  annotations:
+    fabric8.io/expose: &quot;true&quot;
+    fabric8.io/ingress.annotations: &#39;kubernetes.io/ingress.class: nginx&#39;
+    
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: messy-seastar-x-nginx
+---
+# Source: x-nginx/templates/deployment.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: messy-seastar-x-nginx
+  labels:
+    draft: draft-app
+    chart: &quot;x-nginx-0.1.0-SNAPSHOT&quot;
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        draft: draft-app
+        app: messy-seastar-x-nginx
+    spec:
+      containers:
+      - name: x-nginx
+        image: &quot;draft:dev&quot;
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+      terminationGracePeriodSeconds: 10</code></pre>
+<h3 id="其他命令">其他命令</h3>
+<ul>
+<li>部署 <code>helm install .</code></li>
+<li>打包分享<code>helm package .</code></li>
+</ul>
+<h3 id="charts-mirror-镜像">charts mirror 镜像</h3>
+<p>官方的charts镜像由于GFW原因，不能访问，可以使用github镜像：</p>
+<pre><code> helm repo add stable https://burdenbear.github.io/kube-charts-mirror/</code></pre>
+<p>当然，为了更好使用，可以部署本地镜像</p>
+<ul>
+<li>clone mirror仓库到本地，存放到cephfs /charts目录，然后创建一个nginx，挂载这个pv即可。</li>
+</ul>
+<pre class="bash"><code>cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: cephfs-charts-pv
+  namespace: nginx-ingress
+  labels:
+    name: cephfs-charts-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  cephfs:
+    monitors: 
+    - 192.168.86.156:6789
+    path: /charts/kube-charts-mirror-master/docs/
+    user: admin
+    secretRef:
+      name: ceph-secret
+    readOnly: false
+  persistentVolumeReclaimPolicy: Retain
+EOF
+
+</code></pre>
+<h2 id="skaffold">skaffold</h2>
+<p><a href="https://github.com/GoogleCloudPlatform/skaffold">Skaffold</a> 是谷歌开源的简化本地 Kubernetes 应用开发的工具。它将构建镜像、推送镜像以及部署 Kubernetes 服务等流程自动化，可以方便地对 Kubernetes 应用进行持续开发。其功能特点包括</p>
+<ul>
+<li><p>没有服务器组件</p></li>
+<li><p>自动检测代码更改并自动构建、推送和部署服务</p></li>
+<li><p>自动管理镜像标签</p></li>
+<li><p>支持已有工作流</p></li>
+<li><p>保存文件即部署</p></li>
+</ul>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2018/11-20/1542677834278.png" alt="Skaffold" /></p>
+<p>直接进入正题，skaffold通过<code>skaffold.yaml</code>来定义build、deploy，并且可以区分dev环境和正式环境：</p>
+<pre class="yaml"><code>apiVersion: skaffold/v1alpha2
+kind: Config
+build:
+  tagPolicy:
+    envTemplate:
+      template: &quot;{{.DOCKER_REGISTRY}}/jqpeng/x-nginx:{{.VERSION}}&quot;
+  artifacts:
+  - imageName: changeme
+    workspace: ./xnginx-admin
+    docker: {}
+  local: {}
+deploy:
+  kubectl:
+    manifests:
+profiles:
+- name: dev
+  build:
+    tagPolicy:
+      envTemplate:
+        template: &quot;{{.DOCKER_REGISTRY}}/jqpeng/x-nginx:{{.DIGEST_HEX}}&quot;
+    artifacts:
+    - docker: {}
+    local: {}
+  deploy:
+    helm:
+      releases:
+      - name: x-nginx
+        chartPath: charts/x-nginx
+        setValueTemplates:
+          image.repository: &quot;{{.DOCKER_REGISTRY}}/jqpeng/x-nginx&quot;
+          image.tag: &quot;{{.DIGEST_HEX}}&quot;</code></pre>
+<ul>
+<li>apiVersion 指定API版本，jx用的还是v1alpha2，相对较老</li>
+<li>build.tagPolicy.template 配置了image的名称模板，DOCKER_REGISTRY，Version等是环境变量</li>
+<li>artifacts 数组，用于指定构建docker镜像，可以有多个，workspace制定工作目录（新版本的api变为了context）</li>
+<li>deploy 指定部署方式</li>
+<li>profiles 区分环境，这里定义了dev环境
+<ul>
+<li>设置template ，image的tag为DIGEST_HEX，校验码</li>
+<li>部署使用helm</li>
+</ul></li>
+</ul>
+<p>如上的配置，在jx里如何运作的呢？</p>
+<ul>
+<li>正式构建环境，只进行构建<br />
+在jenkinsfile里</li>
+</ul>
+<pre class="bash"><code>     sh &#39;export VERSION=`cat VERSION` &amp;&amp; skaffold build -f skaffold.yaml&#39;</code></pre>
+<p>在devpod里，实现构建和部署</p>
+<pre class="bash"><code>skaffold run -p dev</code></pre>
+<h2 id="draft">Draft</h2>
+<p><a href="https://github.com/Azure/draft">draft</a> 是微软开源的“A tool for developers to create cloud-native applications on Kubernetes”，一个为方便开发者在K8S创建云原生应用的工具，它可以帮助开发人员简化容器应用程序的开发流程。</p>
+<p>上面我们了解了JENKINSFile，charts配置文件，难道每个项目需要按我们自己来写这些配置文件吗？<br />
+Draft告诉你，可以不！Draft最大的益处是，可以自动识别你的工程，然后根据模板库生成对应的配置文件，酷不酷？</p>
+<p>Draft 主要由三个命令组成</p>
+<ul>
+<li><p><code>draft init</code>：初始化 docker registry 账号，并在 Kubernetes 集群中部署 draftd（负责镜像构建、将镜像推送到 docker registry 以及部署应用等）</p></li>
+<li><p><code>draft create</code>：draft 根据 packs 检测应用的开发语言，并自动生成 Dockerfile 和 Kubernetes Helm Charts</p></li>
+<li><p><code>draft up</code>：根据 Dockfile 构建镜像，并使用 Helm 将应用部署到 Kubernetes 集群（支持本地或远端集群）。同时，还会在本地启动一个 draft client，监控代码变化，并将更新过的代码推送给 draftd。</p></li>
+</ul>
+<p>不过，在jx中，仅仅只使用了draft的识别语言，生成配置文件的功能，相关的draft模板可以在# <strong><a href="https://github.com/jenkins-x/draft-packs">draft-packs</a></strong> 里看到。</p>
+<p><img src="https://www.github.com/jadepeng/blogpic/raw/master/images/2018/11-20/1542679414467.png" alt="jx draft-packs" /></p>
+<h2 id="nexus">Nexus</h2>
+<p>jx使用Nexus 来做默认的制品仓库(Artifact repository),Nexus大家应该不默认，好多公司和团队的maven仓库均是通过Nexus搭建的。</p>
+<p>Nexus还可以作为npm，nuget，docker仓库。</p>
+<h2 id="chartmuseum-与monocular">Chartmuseum 与Monocular</h2>
+<p>Chartmuseum - 是一个helm chart仓库，jx用他来做chart仓库。</p>
+<p>Monocular是一个web应用可以用来从helm charts仓库搜索和发现charts。</p>
+<p><a href="https://github.com/helm/monocular/blob/master/docs/MonocularScreenshot.gif"><img src="https://github.com/helm/monocular/raw/master/docs/MonocularScreenshot.gif" alt="Monocular Screenshot" /></a></p>
+<hr />
+<blockquote>
+<p>作者：Jadepeng<br />
+出处：jqpeng的技术记事本--<a href="http://www.cnblogs.com/xiaoqi" class="uri">http://www.cnblogs.com/xiaoqi</a><br />
+您的支持是对博主最大的鼓励，感谢您的认真阅读。<br />
+本文版权归作者所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+</blockquote>
+</div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory"></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info">
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"></div>
+</div>
+
+
+		</div>
+		<div class = "postDesc">posted @ <span id="post-date">2018-11-20 10:30</span> <a href='https://www.cnblogs.com/xiaoqi/'>JadePeng</a> 阅读(<span id="post_view_count">...</span>) 评论(<span id="post_comment_count">...</span>)  <a href ="https://i.cnblogs.com/EditPosts.aspx?postid=9987444" rel="nofollow">编辑</a> <a href="#" onclick="AddToWz(9987444);return false;">收藏</a></div>
+	</div>
+	<script src="//common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script><script>markdown_highlight();</script><script type="text/javascript">var allowComments=true,cb_blogId=42033,cb_entryId=9987444,cb_blogApp=currentBlogApp,cb_blogUserGuid='774d420b-63cf-dd11-9e4d-001cf0cd104b',cb_entryCreatedDate='2018/11/20 10:30:00';loadViewCount(cb_entryId);var cb_postType=1;</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id='comment_form' class='commentform'>
+<a name='commentform'></a>
+<div id='divCommentShow'></div>
+<div id='comment_nav'><span id='span_refresh_tips'></span><a href='javascript:void(0);' onclick='return RefreshCommentList();' id='lnk_RefreshComments' runat='server' clientidmode='Static'>刷新评论</a><a href='#' onclick='return RefreshPage();'>刷新页面</a><a href='#top'>返回顶部</a></div>
+<div id='comment_form_container'></div>
+<div class='ad_text_commentbox' id='ad_text_under_commentbox'></div>
+<div id='ad_t2'></div>
+<div id='opt_under_post'></div>
+<div id='cnblogs_c1' class='c_ad_block'></div>
+<div id='under_post_news'></div>
+<script async='async' src='https://www.googletagservices.com/tag/js/gpt.js'></script>
+<script>
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+</script>
+
+<script>
+  googletag.cmd.push(function() {
+    googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1539008685004-0').addService(googletag.pubads());
+    googletag.pubads().enableSingleRequest();
+    googletag.enableServices();
+  });
+</script>
+<div id='cnblogs_c2' class='c_ad_block'>
+    <div id='div-gpt-ad-1539008685004-0' style='height:60px; width:468px;'>
+    <script>
+    if (new Date() >= new Date(2018, 9, 13)) {
+        googletag.cmd.push(function() { googletag.display('div-gpt-ad-1539008685004-0'); });
+    }
+    </script>
+    </div>
+</div>
+<div id='under_post_kb'></div>
+<div id='HistoryToday' class='c_ad_block'></div>
+<script type='text/javascript'>
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-calendar" style="display:none"></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright &copy;2018 JadePeng
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+<!--PageEndHtml Block Begin-->
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-15877162-6']);
+  _gaq.push(['_setDomainName', '.cnblogs.com']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<!--PageEndHtml Block End-->
+</body>
+</html>
