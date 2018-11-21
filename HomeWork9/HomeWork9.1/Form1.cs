@@ -323,13 +323,11 @@ namespace HomeWork9
             Log.Text = "打开成功";
             try
             {
-                //MySqlCommand createBase = new MySqlCommand("CREATE DATABASE ordermanager");
-                //createBase.ExecuteNonQuery();
-                //MySqlCommand addTable =
-                //    new MySqlCommand("CREATE TABLE `orderlist` (`ordernum`  varchar(255) NULL,`customer`  varchar(255) NULL,`tel-num` varchar(255),`money`  varchar(255) NULL,);" +
-                //    "CREATE TABLE `orderdetail`(`product` varchar(255) NULL,`price` varchar(255) NULL,`amount` varchar(255) NULL,`ordernum`  varchar(255) NULL);", conn);
-                //addTable.ExecuteNonQuery();
-                //Log.Text = "数据库建立成功";
+                MySqlCommand addTable =
+                    new MySqlCommand("CREATE TABLE `orderlist` (`ordernum`  varchar(255) NULL,`customer`  varchar(255) NULL,`tel-num` varchar(255),`money`  varchar(255) NULL);" +
+                    "CREATE TABLE `orderdetail`(`ordernum`  varchar(255) NULL,`product`  varchar(255) NULL,`price` varchar(255),`amount`  varchar(255) NULL);", conn);
+                addTable.ExecuteNonQuery();
+                Log.Text = "数据库建立成功";
             }
             catch(Exception ex)
             {
@@ -337,11 +335,7 @@ namespace HomeWork9
                 Log.Text = ex.Message;
                 Log.Text = "数据表创建失败";
             }
-            MySqlCommand addTable =
-                    new MySqlCommand("CREATE TABLE `orderlist` (`ordernum`  varchar(255) NULL,`customer`  varchar(255) NULL,`tel-num` varchar(255),`money`  varchar(255) NULL);" +
-                    "CREATE TABLE `orderdetail`(`ordernum`  varchar(255) NULL,`product`  varchar(255) NULL,`price` varchar(255),`amount`  varchar(255) NULL);", conn);
-            addTable.ExecuteNonQuery();
-            Log.Text = "数据库建立成功";
+            
         }
     }
 }
