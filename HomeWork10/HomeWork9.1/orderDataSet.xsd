@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="orderDataSet" targetNamespace="http://tempuri.org/orderDataSet.xsd" xmlns:mstns="http://tempuri.org/orderDataSet.xsd" xmlns="http://tempuri.org/orderDataSet.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="orderConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="orderConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.HomeWork7.Properties.Settings.GlobalReference.Default.orderConnectionString" Provider="MySql.Data.MySqlClient" />
+        </Connections>
+        <Tables>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="orderlistTableAdapter" GeneratorDataComponentClassName="orderlistTableAdapter" Name="orderlist" UserDataComponentName="orderlistTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="orderConnectionString (Settings)" DbObjectName="`order`.orderlist" DbObjectType="Table" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="true" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="false">
+                    <CommandText>SELECT ordernum, customer, tel-num, money FROM orderlist</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings />
+            <Sources />
+          </TableAdapter>
+        </Tables>
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="orderDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="True" msprop:Generator_DataSetName="orderDataSet" msprop:Generator_UserDSName="orderDataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="orderlist" msprop:Generator_TableClassName="orderlistDataTable" msprop:Generator_TableVarName="tableorderlist" msprop:Generator_TablePropName="orderlist" msprop:Generator_RowDeletingName="orderlistRowDeleting" msprop:Generator_RowChangingName="orderlistRowChanging" msprop:Generator_RowEvHandlerName="orderlistRowChangeEventHandler" msprop:Generator_RowDeletedName="orderlistRowDeleted" msprop:Generator_UserTableName="orderlist" msprop:Generator_RowChangedName="orderlistRowChanged" msprop:Generator_RowEvArgName="orderlistRowChangeEvent" msprop:Generator_RowClassName="orderlistRow">
+          <xs:complexType>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
